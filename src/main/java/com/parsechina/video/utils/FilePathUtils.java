@@ -1,5 +1,7 @@
 package com.parsechina.video.utils;
 
+import com.google.common.base.Preconditions;
+
 import java.io.File;
 
 /**
@@ -18,6 +20,6 @@ public final class FilePathUtils {
     }
 
     public static String getFileNameOfMp4(String folder) {
-        return getFileName(folder, "MP4");
+        return getFileName(Preconditions.checkNotNull(folder, "File folder is null"), ".mp4");
     }
 }

@@ -1,29 +1,34 @@
 package com.parsechina.video.engine;
 
-import com.parsechina.video.Request;
 import com.parsechina.video.Response;
-import com.parsechina.video.utils.FilePreconditions;
+import com.parsechina.video.utils.IDGenerator;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.job.FFmpegJob;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 /**
  * @author linfeng-eqxiu
  * @description
  * @date 2019/1/23
  */
-public abstract class BaseEditor<T> implements Editor<Response> {
+public abstract class BaseEditor implements Editor<Response> {
 
+    private Logger log = LoggerFactory.getLogger(getClass());
     private FFmpeg ffmpeg;
     private FFprobe ffprobe;
+    private String videoHome;
     private String workDir;
 
     protected BaseEditor() {
@@ -33,17 +38,21 @@ public abstract class BaseEditor<T> implements Editor<Response> {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        workDir = System.getProperty("user.home");
+        videoHome = System.getProperty("video.home");
     }
 
-    private Request<T> request;
+    private Parameter request;
 
     @Override
     public Response call() throws Exception {
 
         if (enableEditor()) {
 
-            editor(request.getData());
+            init();
+
+            editor(request);
+
+            clean();
         }
 
         return Response.Builder.ofError();
@@ -51,20 +60,38 @@ public abstract class BaseEditor<T> implements Editor<Response> {
 
     @Override
     public String uuid() {
-        return UUID.randomUUID().toString();
+        return IDGenerator.uuid();
     }
 
-    public String getWorkDir() {
-        return workDir + File.separator + uuid();
-    }
-
-    private void init() {
-        FilePreconditions.checkNotExist(getWorkDir(), "");
-        try {
-            Files.createDirectory(Paths.get(workDir + File.separator + uuid()));
-        } catch (IOException e) {
-            e.printStackTrace();
+    protected String getWorkDir() {
+        if (StringUtils.isEmpty(workDir)) {
+            workDir = videoHome + File.separator + uuid();
         }
+        return workDir;
+    }
+
+    /**
+     * 初始化，创建目录
+     */
+    private void init() {
+        if (Files.notExists(Paths.get(getWorkDir()))) {
+            try {
+                Files.createDirectory(Paths.get(getWorkDir()));
+            } catch (FileAlreadyExistsException ex) {
+                log.warn("文件已经存在");
+            } catch (IOException e) {
+                log.error(e.getLocalizedMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * 清空目录
+     */
+    private void clean() {
+
+        FileUtils.deleteQuietly(new File(getWorkDir()));
+
     }
 
     /**
@@ -72,7 +99,7 @@ public abstract class BaseEditor<T> implements Editor<Response> {
      *
      * @param request 请求参数
      */
-    private void params(Request<T> request) {
+    private void params(Parameter request) {
         this.request = request;
     }
 
@@ -88,7 +115,7 @@ public abstract class BaseEditor<T> implements Editor<Response> {
      *
      * @param request 参数
      */
-    protected abstract void editor(T request);
+    protected abstract void editor(Parameter request);
 
     @Override
     public FFmpeg getFfmpeg() {

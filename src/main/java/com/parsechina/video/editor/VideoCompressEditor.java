@@ -1,9 +1,9 @@
 package com.parsechina.video.editor;
 
 import com.parsechina.video.engine.BaseEditor;
+import com.parsechina.video.engine.Parameter;
 import com.parsechina.video.utils.FilePathUtils;
 import com.parsechina.video.utils.FilePreconditions;
-import com.google.gson.JsonObject;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -15,9 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope("prototype")
-public class VideoCompileEditor extends BaseEditor<String> {
-
-    private JsonObject params;
+public class VideoCompressEditor extends BaseEditor {
 
     @Override
     protected boolean enableEditor() {
@@ -25,9 +23,11 @@ public class VideoCompileEditor extends BaseEditor<String> {
     }
 
     @Override
-    public void editor(String inputPath) {
+    public void editor(Parameter parameter) {
 
-        FilePreconditions.checkNotExist(inputPath, "File not found: {}" + inputPath);
+        String inputPath = parameter.getParamAsString("");
+
+        FilePreconditions.checkNotExist(inputPath, "Input file not found: {}" + inputPath);
 
         String outPath = FilePathUtils.getFileNameOfMp4(getWorkDir());
         FFmpegBuilder fFmpegBuilder = getFfmpeg().builder();
@@ -41,11 +41,13 @@ public class VideoCompileEditor extends BaseEditor<String> {
 
         executorFFmpeg(fFmpegBuilder);
 
+        FilePreconditions.checkNotExist(outPath, "Output file not found: {}" + outPath);
+
     }
 
     @Override
     public String name() {
-        return null;
+        return "compile";
     }
 
 }
