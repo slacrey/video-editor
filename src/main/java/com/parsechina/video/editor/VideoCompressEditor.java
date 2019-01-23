@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class VideoCompressEditor extends BaseEditor {
 
     @Override
-    protected boolean enableEditor() {
+    protected boolean enableEditor(Parameter parameter) {
         return true;
     }
 
