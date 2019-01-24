@@ -1,4 +1,4 @@
-package com.parsechina.video.editor.compress;
+package com.parsechina.video.editor.convert;
 
 import com.parsechina.video.engine.BaseEditor;
 import com.parsechina.video.engine.MediaInfo;
@@ -12,18 +12,12 @@ import org.springframework.stereotype.Component;
 import java.nio.file.Paths;
 
 /**
- * @author linfeng-eqxiu
- * @description //TODO 设计说明
- * @date 2019/1/23
- */
+ * @author linfeng
+ * @date 2019/1/24
+ **/
 @Component
 @Scope("prototype")
-public class VideoCompressEditor extends BaseEditor {
-
-    @Override
-    public String name() {
-        return "compile";
-    }
+public class ImageToVideoEditor extends BaseEditor {
 
     @Override
     protected boolean enableEditor(Parameter parameter) {
@@ -31,26 +25,35 @@ public class VideoCompressEditor extends BaseEditor {
     }
 
     @Override
-    public MediaInfo editor(MediaInfo mediaInfo, Parameter parameter) {
+    protected MediaInfo editor(MediaInfo mediaInfo, Parameter parameter) {
+
 
         String finalInputPath = FilePreconditions.checkNotExist(mediaInfo.getFilePath(), "Input file not exist: %s", mediaInfo.getFilePath());
-
         String outPath = FilePathUtils.getFileNameOfMp4(Paths.get(finalInputPath).getParent().toString());
+
+        String duration = getNumberFormat().format(mediaInfo.getDuration());
+
         FFmpegBuilder fFmpegBuilder = getFfmpeg().builder();
-        fFmpegBuilder.setInput(finalInputPath)
+        fFmpegBuilder.setInput(finalInputPath).addExtraArgs("-loop", "1")
                 .addOutput(outPath)
                 .setVideoCodec("libx264")
                 .setAudioCodec("aac")
-                .setVideoFrameRate(30)
                 .setConstantRateFactor(18)
+                .setVideoFrameRate(24)
+                .setVideoWidth(mediaInfo.getWidth())
+                .setVideoHeight(mediaInfo.getHeight())
+                .addExtraArgs("-t", duration)
                 .addExtraArgs("-max_muxing_queue_size", "1024");
 
         executorFFmpeg(fFmpegBuilder);
 
-        String finalOutPath = FilePreconditions.checkNotExist(outPath, "Output file not exist: %s", outPath);
+        return getMediaInfo(outPath);
 
-        return getMediaInfo(finalOutPath);
+    }
 
+    @Override
+    public String name() {
+        return "imageToVideo";
     }
 
 }

@@ -1,4 +1,6 @@
-package com.parsechina.video.editor;
+package com.parsechina.video.engine;
+
+import com.parsechina.video.utils.IDGenerator;
 
 /**
  * @author linfeng-eqxiu
@@ -12,6 +14,11 @@ public abstract class BaseGroupEditor implements GroupEditor<EditorReport> {
     @Override
     public void params(Parameter parameter) {
         this.parameter = parameter;
+    }
+
+    @Override
+    public String uuid() {
+        return IDGenerator.uuid();
     }
 
 }

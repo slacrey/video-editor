@@ -1,8 +1,8 @@
 package com.parsechina.video.editor.watermask;
 
-import com.parsechina.video.editor.BaseEditor;
-import com.parsechina.video.editor.MediaInfo;
-import com.parsechina.video.editor.Parameter;
+import com.parsechina.video.engine.BaseEditor;
+import com.parsechina.video.engine.MediaInfo;
+import com.parsechina.video.engine.Parameter;
 import com.parsechina.video.utils.FilePathUtils;
 import com.parsechina.video.utils.FilePreconditions;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
@@ -19,6 +19,8 @@ import java.nio.file.Paths;
 @Component
 @Scope("prototype")
 public class VideoWatermaskEditor extends BaseEditor {
+
+
     @Override
     protected boolean enableEditor(Parameter parameter) {
         return true;
@@ -58,20 +60,4 @@ public class VideoWatermaskEditor extends BaseEditor {
     }
 
 
-    public static class Builder {
-        private String watermaskPath;
-
-        public void addWatermask(String watermask) {
-            this.watermaskPath = watermask;
-        }
-
-        public static VideoWatermaskEditor.Builder watermaskBuilder() {
-            return new VideoWatermaskEditor.Builder();
-        }
-
-        public VideoWatermaskEditor build() {
-            return new VideoWatermaskEditor();
-        }
-
-    }
 }

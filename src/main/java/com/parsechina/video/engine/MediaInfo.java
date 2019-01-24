@@ -2,7 +2,7 @@
  * Copyright (c) 2018. eqxiu.com 北京中网易企秀科技有限公司  All rights reserved.
  */
 
-package com.parsechina.video.editor;
+package com.parsechina.video.engine;
 
 import java.io.Serializable;
 

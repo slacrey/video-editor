@@ -1,4 +1,4 @@
-package com.parsechina.video.editor;
+package com.parsechina.video.engine;
 
 import com.google.common.base.Preconditions;
 import com.parsechina.video.utils.FilePathUtils;
@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,10 +27,10 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class BaseEditor implements Editor<EditorReport<MediaInfo>> {
 
-    public final static String EDITOR_PARAMS = "EDITOR_PARAMS_KEY";
     private Logger log = LoggerFactory.getLogger(getClass());
     private FFmpeg ffmpeg;
     private FFprobe ffprobe;
+    private NumberFormat numberFormat;
     private String videoHome;
     private String workDir;
 
@@ -42,6 +44,12 @@ public abstract class BaseEditor implements Editor<EditorReport<MediaInfo>> {
             throw new RuntimeException(e);
         }
         videoHome = System.getProperty("video.home");
+        numberFormat = NumberFormat.getNumberInstance();
+        // 保留两位小数
+        numberFormat.setMaximumFractionDigits(2);
+        // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+        numberFormat.setRoundingMode(RoundingMode.UP);
+
     }
 
     @Override
@@ -55,9 +63,9 @@ public abstract class BaseEditor implements Editor<EditorReport<MediaInfo>> {
 
                 mediaInfo = editor(parameter.getMediaInfo(), parameter);
             }
-            return DefaultEditorReport.ofOk(mediaInfo);
+            return EditorReport.Default.ofOk(mediaInfo);
         } catch (Exception e) {
-            return DefaultEditorReport.ofError(e);
+            return EditorReport.Default.ofError(e);
         }
 
     }
@@ -131,6 +139,10 @@ public abstract class BaseEditor implements Editor<EditorReport<MediaInfo>> {
         FilePathUtils.waitFileTransferComplete(filePath, 50, TimeUnit.MILLISECONDS);
         FFmpegProbeResult result = getProbeResult(filePath);
         return MediaUtils.ofProbeResult(result);
+    }
+
+    protected NumberFormat getNumberFormat() {
+        return numberFormat;
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.parsechina.video.editor;
+package com.parsechina.video.engine;
 
 import com.parsechina.video.editor.compress.VideoCompressEditor;
 import com.parsechina.video.editor.watermask.VideoWatermaskEditor;

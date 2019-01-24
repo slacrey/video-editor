@@ -1,7 +1,7 @@
 package com.parsechina.video.utils;
 
 import com.google.common.base.Preconditions;
-import com.parsechina.video.editor.MediaInfo;
+import com.parsechina.video.engine.MediaInfo;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
