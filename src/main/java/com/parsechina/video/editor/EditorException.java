@@ -1,4 +1,4 @@
-package com.parsechina.video.engine;
+package com.parsechina.video.editor;
 
 /**
  * @author linfeng-eqxiu

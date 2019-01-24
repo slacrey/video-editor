@@ -1,12 +1,15 @@
-package com.parsechina.video.editor;
+package com.parsechina.video.editor.compress;
 
-import com.parsechina.video.engine.BaseEditor;
-import com.parsechina.video.engine.Parameter;
+import com.parsechina.video.editor.BaseEditor;
+import com.parsechina.video.editor.MediaInfo;
+import com.parsechina.video.editor.Parameter;
 import com.parsechina.video.utils.FilePathUtils;
 import com.parsechina.video.utils.FilePreconditions;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.nio.file.Paths;
 
 /**
  * @author linfeng-eqxiu
@@ -18,20 +21,23 @@ import org.springframework.stereotype.Component;
 public class VideoCompressEditor extends BaseEditor {
 
     @Override
+    public String name() {
+        return "compile";
+    }
+
+    @Override
     protected boolean enableEditor(Parameter parameter) {
         return true;
     }
 
     @Override
-    public void editor(Parameter parameter) {
+    public MediaInfo editor(MediaInfo mediaInfo, Parameter parameter) {
 
-        String inputPath = parameter.getParamAsString("");
+        String finalInputPath = FilePreconditions.checkNotExist(mediaInfo.getFilePath(), "Input file not exist: %s", mediaInfo.getFilePath());
 
-        FilePreconditions.checkNotExist(inputPath, "Input file not found: {}" + inputPath);
-
-        String outPath = FilePathUtils.getFileNameOfMp4(getWorkDir());
+        String outPath = FilePathUtils.getFileNameOfMp4(Paths.get(finalInputPath).getParent().toString());
         FFmpegBuilder fFmpegBuilder = getFfmpeg().builder();
-        fFmpegBuilder.setInput(inputPath)
+        fFmpegBuilder.setInput(finalInputPath)
                 .addOutput(outPath)
                 .setVideoCodec("libx264")
                 .setAudioCodec("aac")
@@ -41,13 +47,10 @@ public class VideoCompressEditor extends BaseEditor {
 
         executorFFmpeg(fFmpegBuilder);
 
-        FilePreconditions.checkNotExist(outPath, "Output file not found: {}" + outPath);
+        String finalOutPath = FilePreconditions.checkNotExist(outPath, "Output file not exist: %s", outPath);
 
-    }
+        return getMediaInfo(finalOutPath);
 
-    @Override
-    public String name() {
-        return "compile";
     }
 
 }
