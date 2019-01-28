@@ -49,6 +49,7 @@ public final class MediaUtils {
                 mediaInfo.setHasVideo(true);
             } else if (FFmpegStream.CodecType.AUDIO.equals(stream.codec_type)) {
                 mediaInfo.setHasAudio(true);
+                mediaInfo.setAudioCodecName(stream.codec_name);
             }
         }
 
