@@ -1,4 +1,4 @@
-package com.parsechina.video.editor;
+package com.parsechina.video.engine;
 
 import java.util.concurrent.Callable;
 
@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
  * @description 视频编辑接口
  * @date 2019/1/22
  */
-interface Editor<T> extends Callable<T> {
+public interface Editor<T> extends Callable<T> {
 
     /**
      * 唯一码

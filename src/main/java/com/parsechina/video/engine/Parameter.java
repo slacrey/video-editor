@@ -1,4 +1,4 @@
-package com.parsechina.video.editor;
+package com.parsechina.video.engine;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;

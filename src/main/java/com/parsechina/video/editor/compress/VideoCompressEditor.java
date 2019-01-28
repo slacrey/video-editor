@@ -1,8 +1,8 @@
 package com.parsechina.video.editor.compress;
 
-import com.parsechina.video.editor.BaseEditor;
-import com.parsechina.video.editor.MediaInfo;
-import com.parsechina.video.editor.Parameter;
+import com.parsechina.video.engine.BaseEditor;
+import com.parsechina.video.engine.MediaInfo;
+import com.parsechina.video.engine.Parameter;
 import com.parsechina.video.utils.FilePathUtils;
 import com.parsechina.video.utils.FilePreconditions;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
