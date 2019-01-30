@@ -21,4 +21,9 @@ public class JsonTests {
         System.out.println(jsonObject.get("test"));
 
     }
+
+    @Test
+    public void testaa() {
+        System.out.println(Math.random());
+    }
 }

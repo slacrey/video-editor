@@ -46,6 +46,7 @@ public class VideoWatermaskEditor extends BaseEditor {
                 .setAudioCodec("aac")
                 .setVideoFrameRate(30)
                 .setConstantRateFactor(18)
+                .addExtraArgs("-pix_fmt", "yuv420p")
                 .addExtraArgs("-max_muxing_queue_size", "1024");
 
         executorFFmpeg(fFmpegBuilder);

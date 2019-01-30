@@ -1,8 +1,8 @@
 package com.parsechina.video.engine.group;
 
 import com.parsechina.video.engine.BaseGroupEditor;
+import com.parsechina.video.engine.Editor;
 import com.parsechina.video.engine.EditorReport;
-import sun.jvm.hotspot.ui.Editor;
 
 import java.util.ArrayList;
 import java.util.List;
